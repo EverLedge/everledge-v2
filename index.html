@@ -6,6 +6,18 @@
 <title>EverLedge — Estate</title>
 <link rel="icon" type="image/png" href="/app/uploads/EverLedge Fav.png">
 <link rel="stylesheet" href="/app/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  // Auth gate — redirect to login if no session
+  const _sb = supabase.createClient(
+    'https://vzanekapmmnjspbbydek.supabase.co',
+    'sb_publishable_eOFaGkpTlT2x8c6wA_mUyg_mb_9b2Mu'
+  );
+  _sb.auth.getSession().then(({ data }) => {
+    if (!data.session) window.location.replace('/login');
+  });
+  window._supabase = _sb;
+</script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -63,16 +75,36 @@
 
   function App() {
     const [view, setView] = React.useState('overview');
+    const [authUser, setAuthUser] = React.useState(null);
     const D = window.EL_DATA;
 
+    React.useEffect(() => {
+      window._supabase.auth.getSession().then(({ data }) => {
+        if (data.session) setAuthUser(data.session.user);
+      });
+    }, []);
+
+    const displayName = authUser
+      ? (authUser.user_metadata?.full_name || authUser.email)
+      : D.user.name;
+
+    async function handleSignOut() {
+      await window._supabase.auth.signOut();
+      window.location.replace('/login');
+    }
+
     const footer = (
-      <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-        <Avatar name={D.user.name} tone="navy" size={36} />
+      <div
+        onClick={handleSignOut}
+        title="Sign out"
+        style={{ display: 'flex', alignItems: 'center', gap: 11, cursor: 'pointer' }}
+      >
+        <Avatar name={displayName} tone="navy" size={36} />
         <div style={{ flex: 1, minWidth: 0, lineHeight: 1.25 }}>
-          <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{D.user.name}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>View account</div>
+          <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName}</div>
+          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Sign out</div>
         </div>
-        <Icon name="chevron-right" size={16} color="var(--neutral-400)" />
+        <Icon name="log-out" size={16} color="var(--neutral-400)" />
       </div>
     );
 

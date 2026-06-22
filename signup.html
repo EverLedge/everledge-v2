@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create account — EverLedge</title>
+<link rel="icon" type="image/png" href="/app/uploads/EverLedge Fav.png">
+<link rel="stylesheet" href="/app/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: var(--font-sans); background: var(--surface-app); color: var(--text-body); }
+
+  .page { min-height: 100vh; display: flex; }
+
+  .brand {
+    width: 420px; flex: none;
+    background: var(--navy-800);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 44px;
+  }
+  .brand-logo { display: flex; align-items: center; gap: 12px; }
+  .brand-logo img { width: 36px; height: 36px; }
+  .brand-logo span { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; color: #fff; }
+  .brand-headline { color: #fff; }
+  .brand-headline h2 { margin: 0 0 14px; font-size: var(--text-h2); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .brand-headline p { margin: 0; font-size: var(--text-base); color: var(--neutral-400); line-height: 1.6; }
+  .brand-bullets { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .brand-bullets li { display: flex; align-items: center; gap: 10px; font-size: var(--text-sm); color: var(--neutral-300); }
+  .brand-bullets li::before { content: '✓'; color: var(--gold-400); font-weight: 700; flex: none; }
+  .brand-footer { font-size: var(--text-xs); color: var(--neutral-600); }
+
+  .form-panel {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 24px;
+  }
+  .form-card { width: 100%; max-width: 440px; }
+  .form-card h1 { margin: 0 0 6px; font-size: var(--text-h3); font-weight: 600; color: var(--text-strong); letter-spacing: -0.02em; }
+  .form-card .subtitle { margin: 0 0 32px; font-size: var(--text-sm); color: var(--text-muted); }
+  .form-card .subtitle a { color: var(--blue-600); text-decoration: none; font-weight: 500; }
+  .form-card .subtitle a:hover { text-decoration: underline; }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+  .field label { font-size: var(--text-sm); font-weight: 500; color: var(--text-strong); }
+  .field input {
+    height: 44px; padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans); font-size: var(--text-base);
+    color: var(--text-strong); background: var(--surface-card);
+    outline: none; transition: border-color 140ms, box-shadow 140ms;
+  }
+  .field input:focus { border-color: var(--border-focus); box-shadow: var(--shadow-focus); }
+  .field .hint { font-size: var(--text-xs); color: var(--text-muted); }
+
+  .btn-primary {
+    width: 100%; height: 44px;
+    background: var(--color-primary); color: #fff;
+    border: none; border-radius: var(--radius-md);
+    font-family: var(--font-sans); font-size: var(--text-base); font-weight: 500;
+    cursor: pointer; transition: background 140ms;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { background: var(--blue-700); }
+  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .terms { font-size: var(--text-xs); color: var(--text-muted); margin-top: 14px; text-align: center; line-height: 1.5; }
+  .terms a { color: var(--blue-600); text-decoration: none; }
+
+  .alert { padding: 12px 14px; border-radius: var(--radius-md); font-size: var(--text-sm); margin-bottom: 18px; display: none; }
+  .alert.error { background: var(--red-50); border: 1px solid #E9CFCD; color: var(--red-600); display: block; }
+  .alert.success { background: var(--green-50); border: 1px solid #CFE6D8; color: var(--green-700); display: block; }
+
+  @media (max-width: 720px) { .brand { display: none; } .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brand">
+    <div class="brand-logo">
+      <img src="/app/assets/everledge-mark-light.png" alt="EverLedge">
+      <span>EverLedge</span>
+    </div>
+    <div class="brand-headline">
+      <h2>Start organising your estate today.</h2>
+      <p>Free to get started. No credit card required.</p>
+      <ul class="brand-bullets">
+        <li>Track lifetime gifts and PET status</li>
+        <li>Record and invite your executors</li>
+        <li>Store wills, deeds and valuations securely</li>
+        <li>Understand your IHT position clearly</li>
+      </ul>
+    </div>
+    <div class="brand-footer">© EverLedge 2026 · UK-based · Private &amp; Secure</div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-card">
+      <h1>Create your account</h1>
+      <p class="subtitle">Already have an account? <a href="/login">Sign in</a></p>
+
+      <div id="alert" class="alert"></div>
+
+      <form id="signup-form" novalidate>
+        <div class="row">
+          <div class="field">
+            <label for="first-name">First name</label>
+            <input type="text" id="first-name" placeholder="Oliver" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="last-name">Last name</label>
+            <input type="text" id="last-name" placeholder="Beasant" autocomplete="family-name" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password" required>
+          <span class="hint">Must be at least 8 characters.</span>
+        </div>
+        <button type="submit" class="btn-primary" id="submit-btn">Create account</button>
+      </form>
+
+      <p class="terms">By creating an account you agree to EverLedge's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://vzanekapmmnjspbbydek.supabase.co',
+    'sb_publishable_eOFaGkpTlT2x8c6wA_mUyg_mb_9b2Mu'
+  );
+
+  // Redirect if already logged in
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session) window.location.replace('/');
+  });
+
+  const form = document.getElementById('signup-form');
+  const btn = document.getElementById('submit-btn');
+  const alertEl = document.getElementById('alert');
+
+  function showAlert(msg, type) {
+    alertEl.textContent = msg;
+    alertEl.className = 'alert ' + type;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    alertEl.className = 'alert';
+    btn.disabled = true;
+    btn.textContent = 'Creating account…';
+
+    const firstName = document.getElementById('first-name').value.trim();
+    const lastName = document.getElementById('last-name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!firstName || !lastName) {
+      showAlert('Please enter your first and last name.', 'error');
+      btn.disabled = false; btn.textContent = 'Create account'; return;
+    }
+    if (password.length < 8) {
+      showAlert('Password must be at least 8 characters.', 'error');
+      btn.disabled = false; btn.textContent = 'Create account'; return;
+    }
+
+    const { error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}` },
+      },
+    });
+
+    if (error) {
+      showAlert(error.message, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Create account';
+    } else {
+      showAlert('Account created! Check your email to confirm, then sign in.', 'success');
+      btn.textContent = 'Account created';
+    }
+  });
+</script>
+</body>
+</html>

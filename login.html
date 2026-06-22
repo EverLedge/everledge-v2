@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in — EverLedge</title>
+<link rel="icon" type="image/png" href="/app/uploads/EverLedge Fav.png">
+<link rel="stylesheet" href="/app/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: var(--font-sans); background: var(--surface-app); color: var(--text-body); }
+
+  .page { min-height: 100vh; display: flex; }
+
+  /* Left brand panel */
+  .brand {
+    width: 420px; flex: none;
+    background: var(--navy-800);
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 44px;
+  }
+  .brand-logo { display: flex; align-items: center; gap: 12px; }
+  .brand-logo img { width: 36px; height: 36px; }
+  .brand-logo span { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; color: #fff; }
+  .brand-headline { color: #fff; }
+  .brand-headline h2 { margin: 0 0 14px; font-size: var(--text-h2); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+  .brand-headline p { margin: 0; font-size: var(--text-base); color: var(--neutral-400); line-height: 1.6; }
+  .brand-footer { font-size: var(--text-xs); color: var(--neutral-600); }
+
+  /* Right form panel */
+  .form-panel {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 24px;
+  }
+  .form-card {
+    width: 100%; max-width: 420px;
+  }
+  .form-card h1 { margin: 0 0 6px; font-size: var(--text-h3); font-weight: 600; color: var(--text-strong); letter-spacing: -0.02em; }
+  .form-card .subtitle { margin: 0 0 32px; font-size: var(--text-sm); color: var(--text-muted); }
+  .form-card .subtitle a { color: var(--blue-600); text-decoration: none; font-weight: 500; }
+  .form-card .subtitle a:hover { text-decoration: underline; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+  .field label { font-size: var(--text-sm); font-weight: 500; color: var(--text-strong); }
+  .field input {
+    height: 44px; padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans); font-size: var(--text-base);
+    color: var(--text-strong); background: var(--surface-card);
+    outline: none; transition: border-color 140ms, box-shadow 140ms;
+  }
+  .field input:focus { border-color: var(--border-focus); box-shadow: var(--shadow-focus); }
+  .field input.error { border-color: var(--status-danger); }
+  .field .hint { font-size: var(--text-xs); color: var(--text-muted); }
+  .field .err-msg { font-size: var(--text-xs); color: var(--status-danger); }
+
+  .btn-primary {
+    width: 100%; height: 44px;
+    background: var(--color-primary); color: #fff;
+    border: none; border-radius: var(--radius-md);
+    font-family: var(--font-sans); font-size: var(--text-base); font-weight: 500;
+    cursor: pointer; transition: background 140ms;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { background: var(--blue-700); }
+  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; color: var(--text-muted); font-size: var(--text-xs); }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-subtle); }
+
+  .alert { padding: 12px 14px; border-radius: var(--radius-md); font-size: var(--text-sm); margin-bottom: 18px; display: none; }
+  .alert.error { background: var(--red-50); border: 1px solid #E9CFCD; color: var(--red-600); display: block; }
+  .alert.success { background: var(--green-50); border: 1px solid #CFE6D8; color: var(--green-700); display: block; }
+
+  @media (max-width: 720px) { .brand { display: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="brand">
+    <div class="brand-logo">
+      <img src="/app/assets/everledge-mark-light.png" alt="EverLedge">
+      <span>EverLedge</span>
+    </div>
+    <div class="brand-headline">
+      <h2>Your estate, organised for the people you love.</h2>
+      <p>Track gifts, record executors, and store everything your family will need — clearly and securely.</p>
+    </div>
+    <div class="brand-footer">© EverLedge 2026 · Private &amp; Secure</div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-card">
+      <h1>Sign in</h1>
+      <p class="subtitle">Don't have an account? <a href="/signup">Create one free</a></p>
+
+      <div id="alert" class="alert"></div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          <span class="hint"><a href="/forgot-password" style="color:var(--blue-600);text-decoration:none;font-size:var(--text-xs)">Forgot password?</a></span>
+        </div>
+        <button type="submit" class="btn-primary" id="submit-btn">Sign in</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://vzanekapmmnjspbbydek.supabase.co',
+    'sb_publishable_eOFaGkpTlT2x8c6wA_mUyg_mb_9b2Mu'
+  );
+
+  // Redirect if already logged in
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session) window.location.replace('/');
+  });
+
+  const form = document.getElementById('login-form');
+  const btn = document.getElementById('submit-btn');
+  const alert = document.getElementById('alert');
+
+  function showAlert(msg, type) {
+    alert.textContent = msg;
+    alert.className = 'alert ' + type;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    alert.className = 'alert';
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      showAlert(error.message, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Sign in';
+    } else {
+      window.location.replace('/');
+    }
+  });
+</script>
+</body>
+</html>
