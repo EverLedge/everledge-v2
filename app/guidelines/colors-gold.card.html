@@ -1,0 +1,35 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Luxury Accent — Gold" subtitle="Used sparingly: milestones, premium, estate completion" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 20px; font-family: var(--font-sans); background: var(--surface-card); }
+  .wrap { display: flex; gap: 18px; align-items: stretch; }
+  .row { display: flex; gap: 10px; flex: 1; }
+  .sw { flex: 1; border-radius: var(--radius-md); border: 1px solid rgba(0,0,0,0.05); overflow: hidden; }
+  .chip { height: 56px; }
+  .meta { padding: 7px 9px; }
+  .name { font-size: 11px; font-weight: 600; color: var(--text-strong); }
+  .hex { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .note { width: 200px; flex: none; display: flex; flex-direction: column; justify-content: center; gap: 8px; border-left: 1px solid var(--border-subtle); padding-left: 18px; }
+  .note .badge { align-self: flex-start; display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--gold-700); background:var(--gold-50); border:1px solid var(--gold-100); padding:4px 11px; border-radius:999px; }
+  .note p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-muted); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="row">
+      <div class="sw"><div class="chip" style="background:var(--gold-700)"></div><div class="meta"><div class="name">gold-700</div><div class="hex">#9C8049</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--gold-600)"></div><div class="meta"><div class="name">gold-600</div><div class="hex">#B89B5E</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--gold-400)"></div><div class="meta"><div class="name">gold-400</div><div class="hex">#CDB67F</div></div></div>
+      <div class="sw"><div class="chip" style="background:var(--gold-50)"></div><div class="meta"><div class="name">gold-50</div><div class="hex">#F7F2E6</div></div></div>
+    </div>
+    <div class="note">
+      <span class="badge">✦ Estate complete</span>
+      <p>Reserve gold for milestones, premium features and full-exemption moments. Never as a primary action colour.</p>
+    </div>
+  </div>
+</body>
+</html>

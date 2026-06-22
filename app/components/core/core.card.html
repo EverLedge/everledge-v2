@@ -1,0 +1,72 @@
+<!-- @dsCard group="Components" viewport="700x430" name="Core — Buttons, Cards, Badges" subtitle="Buttons, card surfaces, badges, avatars, icons" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 24px; font-family: var(--font-sans); background: var(--neutral-50); color: var(--text-strong); }
+  .group { margin-bottom: 22px; }
+  .lbl { font-size: 11px; letter-spacing: var(--tracking-caps); text-transform: uppercase; color: var(--text-muted); font-weight: 600; margin-bottom: 11px; }
+  .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { Button, Card, Badge, Avatar, Icon } = window.EverLedgeDesignSystem_de3ce8;
+  function Demo() {
+    return (
+      <div>
+        <div className="group">
+          <div className="lbl">Buttons</div>
+          <div className="row">
+            <Button variant="primary">Record a gift</Button>
+            <Button variant="secondary" iconLeft={<Icon name="download" size={16} />}>Export</Button>
+            <Button variant="ghost">Cancel</Button>
+            <Button variant="gold" iconLeft={<Icon name="sparkles" size={16} />}>Complete estate</Button>
+            <Button variant="primary" size="sm">Small</Button>
+            <Button variant="primary" disabled>Disabled</Button>
+          </div>
+        </div>
+        <div className="group">
+          <div className="lbl">Badges</div>
+          <div className="row">
+            <Badge tone="success" dot>Exempt</Badge>
+            <Badge tone="warning" dot>1.4 yrs left</Badge>
+            <Badge tone="danger" dot>In estate</Badge>
+            <Badge tone="primary">Active PET</Badge>
+            <Badge tone="gold">Premium</Badge>
+            <Badge tone="neutral">Draft</Badge>
+          </div>
+        </div>
+        <div className="row" style={{ alignItems: 'stretch' }}>
+          <Card style={{ flex: 1 }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <Avatar name="Eleanor Whitcombe" />
+              <div>
+                <div style={{ fontWeight: 600 }}>Eleanor Whitcombe</div>
+                <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>Daughter · Executor</div>
+              </div>
+            </div>
+          </Card>
+          <Card interactive accent="gold" style={{ flex: 1 }}>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <Icon name="shield" color="var(--gold-700)" />
+              <span style={{ fontWeight: 600 }}>Estate fully recorded</span>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+  setTimeout(() => window.lucide && window.lucide.createIcons(), 60);
+</script>
+</body>
+</html>

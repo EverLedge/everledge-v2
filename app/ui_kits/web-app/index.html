@@ -1,0 +1,106 @@
+<!-- @dsCard group="Web App" viewport="1320x860" name="EverLedge Web App" subtitle="Interactive estate dashboard — Overview, Gifts, Executors, Documents" -->
+<!-- @startingPoint section="Web App" subtitle="Full estate-management app shell" viewport="1320x860" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EverLedge — Estate</title>
+<link rel="icon" type="image/png" href="../../uploads/EverLedge Fav.png">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { font-family: var(--font-sans); background: var(--surface-app); color: var(--text-body); }
+  #root { height: 100vh; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--neutral-300); border-radius: 999px; border: 3px solid var(--surface-app); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="Topbar.jsx"></script>
+<script type="text/babel" src="OverviewScreen.jsx"></script>
+<script type="text/babel" src="GiftsScreen.jsx"></script>
+<script type="text/babel" src="SecondaryScreens.jsx"></script>
+<script type="text/babel" data-presets="react">
+  const { SidebarNav, Avatar, Icon, Button } = window.EverLedgeDesignSystem_de3ce8;
+
+  const NAV = [
+    { id: 'overview', label: 'Overview', icon: 'home' },
+    { id: 'estate', label: 'Estate', icon: 'landmark' },
+    { id: 'gifts', label: 'Gifts', icon: 'gift', badge: 6 },
+    { id: 'executors', label: 'Executors', icon: 'users' },
+    { id: 'documents', label: 'Documents', icon: 'folder' },
+    { id: 'reports', label: 'Reports', icon: 'file-text' },
+    { id: 'settings', label: 'Settings', icon: 'settings' },
+  ];
+
+  const META = {
+    overview:  { title: 'Overview', subtitle: 'Your estate at a glance — organised and protected.' },
+    gifts:     { title: 'Lifetime Gifts', subtitle: 'Potentially Exempt Transfers and their seven-year status.' },
+    executors: { title: 'Executors', subtitle: 'Those entrusted to administer your estate.' },
+    documents: { title: 'Documents', subtitle: 'Wills, deeds and valuations, securely stored.' },
+    estate:    { title: 'Estate', subtitle: 'Assets, liabilities and current valuation.' },
+    reports:   { title: 'Reports', subtitle: 'Inheritance tax projections and summaries.' },
+    settings:  { title: 'Settings', subtitle: 'Account, notifications and access.' },
+  };
+
+  function Placeholder({ name }) {
+    return (
+      <div style={{ padding: '64px 36px', maxWidth: 'var(--content-max)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 16, padding: '60px 20px', background: 'var(--surface-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' }}>
+          <img src="../../assets/illustration-landmark.svg" alt="" width="220" style={{ borderRadius: 'var(--radius-md)' }} />
+          <h3 style={{ margin: 0, fontSize: 'var(--text-h3)', fontWeight: 600, color: 'var(--text-strong)' }}>{name}</h3>
+          <p style={{ margin: 0, color: 'var(--text-muted)', maxWidth: 420, lineHeight: 1.55 }}>This section of the EverLedge UI kit is intentionally left as a placeholder. Overview, Gifts, Executors and Documents are fully built out.</p>
+        </div>
+      </div>
+    );
+  }
+
+  function App() {
+    const [view, setView] = React.useState('overview');
+    const D = window.EL_DATA;
+
+    const footer = (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+        <Avatar name={D.user.name} tone="navy" size={36} />
+        <div style={{ flex: 1, minWidth: 0, lineHeight: 1.25 }}>
+          <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{D.user.name}</div>
+          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>View account</div>
+        </div>
+        <Icon name="chevron-right" size={16} color="var(--neutral-400)" />
+      </div>
+    );
+
+    let screen;
+    if (view === 'overview') screen = <window.OverviewScreen />;
+    else if (view === 'gifts') screen = <window.GiftsScreen />;
+    else if (view === 'executors') screen = <window.ExecutorsScreen />;
+    else if (view === 'documents') screen = <window.DocumentsScreen />;
+    else screen = <Placeholder name={META[view].title} />;
+
+    const headerAction = view === 'gifts'
+      ? <Button variant="primary" iconLeft={<Icon name="plus" size={16} />}>Record a gift</Button>
+      : null;
+
+    return (
+      <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        <SidebarNav items={NAV} active={view} onSelect={setView} footer={footer} />
+        <main style={{ flex: 1, overflowY: 'auto', background: 'var(--surface-app)' }}>
+          <window.Topbar title={META[view].title} subtitle={META[view].subtitle} action={headerAction} />
+          {screen}
+        </main>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/app/ui_kits/web-app/$1" }
+  ]
+}

@@ -1,0 +1,20 @@
+<svg width="320" height="200" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Landmark colonnade illustration">
+  <rect width="320" height="200" fill="#EEF4F9"></rect>
+  <g stroke="#1A2734" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    
+    <path d="M84 70 L160 38 L236 70 Z"></path>
+    
+    <path d="M78 70 H242 V82 H78 Z"></path>
+    
+    <path d="M92 82 V150 M92 82 q0 -2 0 0 M88 150 H100 V156 H86 Z"></path>
+    <path d="M122 82 V150 M118 150 H132 V156 H116 Z"></path>
+    <path d="M154 82 V150 M150 150 H164 V156 H148 Z"></path>
+    <path d="M186 82 V150 M182 150 H196 V156 H180 Z"></path>
+    <path d="M218 82 V150 M214 150 H228 V156 H212 Z"></path>
+    
+    <path d="M92 86 V146 M122 86 V146 M154 86 V146 M186 86 V146 M218 86 V146" opacity="0.4"></path>
+    
+    <path d="M70 156 H250 M60 164 H260 M50 172 H270"></path>
+  </g>
+  <path d="M50 172 H270" stroke="#B89B5E" stroke-width="1.4" stroke-dasharray="2 5" opacity="0.7"></path>
+</svg>
