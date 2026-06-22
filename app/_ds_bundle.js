@@ -1202,7 +1202,7 @@ function SidebarNav({
       gap: 11
     }
   }, /*#__PURE__*/React.createElement("img", {
-    src: "../../assets/everledge-mark.png",
+    src: "/app/assets/everledge-mark.png",
     alt: "EverLedge",
     width: 32,
     height: 32,
