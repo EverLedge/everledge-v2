@@ -68,10 +68,18 @@
     const [view, setView] = React.useState('overview');
     const [search, setSearch] = React.useState('');
     const [authUser, setAuthUser] = React.useState(null);
+    const [plan, setPlan] = React.useState('free');
 
     React.useEffect(() => {
-      window._supabase.auth.getSession().then(({ data }) => {
-        if (data.session) setAuthUser(data.session.user);
+      window._supabase.auth.getSession().then(async ({ data }) => {
+        if (!data.session) return;
+        setAuthUser(data.session.user);
+        const { data: profile } = await window._supabase
+          .from('profiles')
+          .select('plan')
+          .eq('id', data.session.user.id)
+          .single();
+        if (profile) setPlan(profile.plan);
       });
     }, []);
 
@@ -101,13 +109,13 @@
     );
 
     let screen;
-    if      (view === 'overview')  screen = <window.OverviewScreen  search={search} onNavigate={handleNav} />;
+    if      (view === 'overview')  screen = <window.OverviewScreen  search={search} onNavigate={handleNav} plan={plan} />;
     else if (view === 'estate')    screen = <window.EstateScreen    search={search} />;
     else if (view === 'gifts')     screen = <window.GiftsScreen     search={search} />;
     else if (view === 'executors') screen = <window.ExecutorsScreen search={search} />;
-    else if (view === 'documents') screen = <window.DocumentsScreen search={search} />;
-    else if (view === 'reports')   screen = <window.ReportsScreen />;
-    else if (view === 'settings')  screen = <window.SettingsScreen />;
+    else if (view === 'documents') screen = <window.DocumentsScreen search={search} plan={plan} onUpgrade={() => handleNav('settings')} />;
+    else if (view === 'reports')   screen = <window.ReportsScreen   plan={plan} onUpgrade={() => handleNav('settings')} />;
+    else if (view === 'settings')  screen = <window.SettingsScreen  plan={plan} />;
 
     return (
       <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>

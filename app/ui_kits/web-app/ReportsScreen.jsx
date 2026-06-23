@@ -1,4 +1,4 @@
-function ReportsScreen() {
+function ReportsScreen({ plan = 'free', onUpgrade }) {
   const { Card, Badge, Icon } = window.EverLedgeDesignSystem_de3ce8;
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -70,8 +70,11 @@ function ReportsScreen() {
         ))}
       </div>
 
-      {/* Tax breakdown bar */}
-      <Card padding="var(--space-6)" style={{ marginBottom: 24 }}>
+      {/* Pro gate — show upgrade prompt below summary cards for free users */}
+      {plan !== 'pro' && <window.ProGate onUpgrade={onUpgrade} />}
+
+      {/* Tax breakdown bar — pro only */}
+      {plan === 'pro' && <Card padding="var(--space-6)" style={{ marginBottom: 24 }}>
         <div style={{ fontSize: 'var(--text-xs)', letterSpacing: 'var(--tracking-caps)', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600, marginBottom: 6 }}>IHT Allocation Breakdown</div>
         <h3 style={{ margin: '0 0 20px', fontSize: 'var(--text-h4)', fontWeight: 600, color: 'var(--text-strong)' }}>How your estate is taxed</h3>
         <div style={{ height: 14, borderRadius: 'var(--radius-pill)', overflow: 'hidden', background: 'var(--surface-sunken)', display: 'flex', marginBottom: 16 }}>
@@ -104,9 +107,10 @@ function ReportsScreen() {
             £{nrbUsedByGifts.toLocaleString('en-GB')} of your Nil Rate Band is being used by gifts made within the last 7 years, reducing the allowance available to your estate.
           </div>
         )}
-      </Card>
+      </Card>}
 
-      {/* Two col: PETs + taper table */}
+      {/* Two col: PETs + taper table — pro only */}
+      {plan === 'pro' &&
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 24 }}>
         <Card padding="var(--space-6)">
           <h3 style={{ margin: '0 0 18px', fontSize: 'var(--text-h4)', fontWeight: 600, color: 'var(--text-strong)' }}>Active Lifetime Gifts (PETs)</h3>
@@ -154,11 +158,11 @@ function ReportsScreen() {
             ))}
           </div>
         </Card>
-      </div>
+      </div>}
 
-      <div style={{ marginTop: 24, padding: '14px 18px', background: 'var(--neutral-50)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+      {plan === 'pro' && <div style={{ marginTop: 24, padding: '14px 18px', background: 'var(--neutral-50)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)', lineHeight: 1.6 }}>
         <strong>Important:</strong> This is an illustrative estimate only and does not constitute tax advice. Actual IHT liability depends on many factors including business relief, agricultural relief, spouse exemptions, charitable bequests and current HMRC rules. Please consult a qualified tax adviser.
-      </div>
+      </div>}
     </div>
   );
 }

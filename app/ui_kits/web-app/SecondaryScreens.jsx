@@ -149,8 +149,33 @@ window.ExecutorsScreen = ExecutorsScreen;
 
 /* ── Documents ── */
 
-function DocumentsScreen({ search }) {
+function ProGate({ onUpgrade }) {
+  const { Button, Icon } = window.EverLedgeDesignSystem_de3ce8;
+  return (
+    <div style={{ padding: '64px 36px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 20, maxWidth: 520, margin: '0 auto' }}>
+      <span style={{ width: 56, height: 56, borderRadius: 'var(--radius-lg)', background: 'var(--gold-50)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon name="star" size={26} color="var(--gold-600)" />
+      </span>
+      <div>
+        <h3 style={{ margin: '0 0 8px', fontSize: 'var(--text-h3)', fontWeight: 600, color: 'var(--text-strong)' }}>Professional feature</h3>
+        <p style={{ margin: 0, fontSize: 'var(--text-base)', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+          This feature is included in EverLedge Professional. Upgrade for £6/month to unlock Documents, full IHT reports, and the executor portal.
+        </p>
+      </div>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <Button variant="primary" iconLeft={<Icon name="star" size={16} />} onClick={onUpgrade}>Upgrade to Professional</Button>
+      </div>
+      <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Secure payment via Stripe · Cancel any time</p>
+    </div>
+  );
+}
+window.ProGate = ProGate;
+
+function DocumentsScreen({ search, plan = 'free', onUpgrade }) {
   const { Card, Badge, Icon, Button } = window.EverLedgeDesignSystem_de3ce8;
+
+  if (plan !== 'pro') return <ProGate onUpgrade={onUpgrade} />;
+
   const [docs, setDocs] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [uploading, setUploading] = React.useState(false);
