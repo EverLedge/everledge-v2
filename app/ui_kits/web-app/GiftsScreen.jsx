@@ -59,6 +59,7 @@ function GiftsScreen({ search }) {
                 relationship={g.relationship}
                 value={'£' + Number(g.value).toLocaleString('en-GB')}
                 giftDate={g.gift_date}
+                asOf={isExempt(g) ? new Date(new Date(g.gift_date).getTime() + 8 * 365.25 * 24 * 3600 * 1000) : new Date()}
                 onClick={() => {}}
               />
               <button
