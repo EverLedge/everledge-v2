@@ -38,45 +38,36 @@
 <script type="text/babel" src="/app/ui_kits/web-app/OverviewScreen.jsx"></script>
 <script type="text/babel" src="/app/ui_kits/web-app/GiftsScreen.jsx"></script>
 <script type="text/babel" src="/app/ui_kits/web-app/SecondaryScreens.jsx"></script>
+<script type="text/babel" src="/app/ui_kits/web-app/EstateScreen.jsx"></script>
+<script type="text/babel" src="/app/ui_kits/web-app/ReportsScreen.jsx"></script>
+<script type="text/babel" src="/app/ui_kits/web-app/SettingsScreen.jsx"></script>
 <script type="text/babel" data-presets="react">
   const { SidebarNav, Avatar, Icon, Button } = window.EverLedgeDesignSystem_de3ce8;
 
   const NAV = [
-    { id: 'overview', label: 'Overview', icon: 'home' },
-    { id: 'estate', label: 'Estate', icon: 'landmark' },
-    { id: 'gifts', label: 'Gifts', icon: 'gift', badge: 6 },
-    { id: 'executors', label: 'Executors', icon: 'users' },
-    { id: 'documents', label: 'Documents', icon: 'folder' },
-    { id: 'reports', label: 'Reports', icon: 'file-text' },
-    { id: 'settings', label: 'Settings', icon: 'settings' },
+    { id: 'overview',   label: 'Overview',   icon: 'home' },
+    { id: 'estate',     label: 'Estate',     icon: 'landmark' },
+    { id: 'gifts',      label: 'Gifts',      icon: 'gift' },
+    { id: 'executors',  label: 'Executors',  icon: 'users' },
+    { id: 'documents',  label: 'Documents',  icon: 'folder' },
+    { id: 'reports',    label: 'Reports',    icon: 'file-text' },
+    { id: 'settings',   label: 'Settings',   icon: 'settings' },
   ];
 
   const META = {
-    overview:  { title: 'Overview', subtitle: 'Your estate at a glance — organised and protected.' },
+    overview:  { title: 'Overview',       subtitle: 'Your estate at a glance — organised and protected.' },
+    estate:    { title: 'Estate',         subtitle: 'Assets, liabilities and current valuation.' },
     gifts:     { title: 'Lifetime Gifts', subtitle: 'Potentially Exempt Transfers and their seven-year status.' },
-    executors: { title: 'Executors', subtitle: 'Those entrusted to administer your estate.' },
-    documents: { title: 'Documents', subtitle: 'Wills, deeds and valuations, securely stored.' },
-    estate:    { title: 'Estate', subtitle: 'Assets, liabilities and current valuation.' },
-    reports:   { title: 'Reports', subtitle: 'Inheritance tax projections and summaries.' },
-    settings:  { title: 'Settings', subtitle: 'Account, notifications and access.' },
+    executors: { title: 'Executors',      subtitle: 'Those entrusted to administer your estate.' },
+    documents: { title: 'Documents',      subtitle: 'Wills, deeds and valuations, securely stored.' },
+    reports:   { title: 'Reports',        subtitle: 'Inheritance tax projections and summaries.' },
+    settings:  { title: 'Settings',       subtitle: 'Account and security settings.' },
   };
-
-  function Placeholder({ name }) {
-    return (
-      <div style={{ padding: '64px 36px', maxWidth: 'var(--content-max)' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 16, padding: '60px 20px', background: 'var(--surface-card)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' }}>
-          <img src="/app/assets/illustration-landmark.svg" alt="" width="220" style={{ borderRadius: 'var(--radius-md)' }} />
-          <h3 style={{ margin: 0, fontSize: 'var(--text-h3)', fontWeight: 600, color: 'var(--text-strong)' }}>{name}</h3>
-          <p style={{ margin: 0, color: 'var(--text-muted)', maxWidth: 420, lineHeight: 1.55 }}>This screen is coming soon.</p>
-        </div>
-      </div>
-    );
-  }
 
   function App() {
     const [view, setView] = React.useState('overview');
+    const [search, setSearch] = React.useState('');
     const [authUser, setAuthUser] = React.useState(null);
-    const D = window.EL_DATA;
 
     React.useEffect(() => {
       window._supabase.auth.getSession().then(({ data }) => {
@@ -86,44 +77,48 @@
 
     const displayName = authUser
       ? (authUser.user_metadata?.full_name || authUser.email)
-      : D.user.name;
+      : 'EverLedge User';
 
     async function handleSignOut() {
       await window._supabase.auth.signOut();
       window.location.replace('/login');
     }
 
+    function handleNav(id) {
+      setView(id);
+      setSearch('');
+    }
+
     const footer = (
-      <div
-        onClick={handleSignOut}
-        title="Sign out"
-        style={{ display: 'flex', alignItems: 'center', gap: 11, cursor: 'pointer' }}
-      >
+      <div onClick={() => handleNav('settings')} title="Settings" style={{ display: 'flex', alignItems: 'center', gap: 11, cursor: 'pointer' }}>
         <Avatar name={displayName} tone="navy" size={36} />
         <div style={{ flex: 1, minWidth: 0, lineHeight: 1.25 }}>
           <div style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{displayName}</div>
-          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Sign out</div>
+          <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>Settings</div>
         </div>
-        <Icon name="log-out" size={16} color="var(--neutral-400)" />
+        <Icon name="settings" size={16} color="var(--neutral-400)" />
       </div>
     );
 
     let screen;
-    if (view === 'overview') screen = <window.OverviewScreen />;
-    else if (view === 'gifts') screen = <window.GiftsScreen />;
-    else if (view === 'executors') screen = <window.ExecutorsScreen />;
-    else if (view === 'documents') screen = <window.DocumentsScreen />;
-    else screen = <Placeholder name={META[view].title} />;
-
-    const headerAction = view === 'gifts'
-      ? <Button variant="primary" iconLeft={<Icon name="plus" size={16} />}>Record a gift</Button>
-      : null;
+    if      (view === 'overview')  screen = <window.OverviewScreen  search={search} />;
+    else if (view === 'estate')    screen = <window.EstateScreen    search={search} />;
+    else if (view === 'gifts')     screen = <window.GiftsScreen     search={search} />;
+    else if (view === 'executors') screen = <window.ExecutorsScreen search={search} />;
+    else if (view === 'documents') screen = <window.DocumentsScreen search={search} />;
+    else if (view === 'reports')   screen = <window.ReportsScreen />;
+    else if (view === 'settings')  screen = <window.SettingsScreen />;
 
     return (
       <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-        <SidebarNav items={NAV} active={view} onSelect={setView} footer={footer} />
+        <SidebarNav items={NAV} active={view} onSelect={handleNav} footer={footer} />
         <main style={{ flex: 1, overflowY: 'auto', background: 'var(--surface-app)' }}>
-          <window.Topbar title={META[view].title} subtitle={META[view].subtitle} action={headerAction} />
+          <window.Topbar
+            title={META[view].title}
+            subtitle={META[view].subtitle}
+            search={search}
+            onSearch={setSearch}
+          />
           {screen}
         </main>
       </div>
