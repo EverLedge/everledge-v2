@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Executor Portal — EverLedge</title>
+<link rel="icon" type="image/png" href="/app/uploads/EverLedge Fav.png">
+<link rel="stylesheet" href="/app/styles.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; font-family: var(--font-sans); background: var(--surface-app); color: var(--text-body); }
+
+  .topbar {
+    background: var(--navy-800);
+    padding: 0 36px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo img { width: 28px; height: 28px; }
+  .topbar-logo span { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; color: #fff; }
+  .topbar-badge { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold-400); border: 1px solid var(--gold-700); border-radius: 999px; padding: 3px 10px; }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .hero { margin-bottom: 40px; }
+  .hero-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .hero-name { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 600; letter-spacing: -0.03em; color: var(--text-strong); margin: 0 0 6px; }
+  .hero-sub { font-size: var(--text-base); color: var(--text-muted); margin: 0; line-height: 1.6; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .stat-card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 24px; }
+  .stat-label { font-size: var(--text-sm); color: var(--text-muted); font-weight: 500; margin-bottom: 10px; }
+  .stat-value { font-family: var(--font-mono); font-size: clamp(1.4rem, 2.5vw, 1.8rem); font-weight: 500; letter-spacing: -0.03em; color: var(--text-strong); }
+  .stat-value.amber { color: var(--amber-600); }
+  .stat-value.blue { color: var(--blue-700); }
+  .stat-sub { font-size: var(--text-xs); color: var(--text-muted); margin-top: 6px; }
+
+  .section { margin-bottom: 32px; }
+  .section-title { font-size: var(--text-base); font-weight: 700; color: var(--text-strong); margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
+  .section-title svg { color: var(--neutral-400); }
+
+  .card { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; }
+  .row { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); }
+  .row:last-child { border-bottom: none; }
+  .row-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--navy-800); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex: none; }
+  .row-avatar.gold { background: var(--gold-600); }
+  .row-body { flex: 1; min-width: 0; }
+  .row-name { font-size: var(--text-sm); font-weight: 600; color: var(--text-strong); }
+  .row-sub { font-size: var(--text-xs); color: var(--text-muted); margin-top: 2px; }
+  .row-right { text-align: right; }
+  .row-value { font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 600; color: var(--text-strong); }
+  .row-badge { display: inline-block; margin-top: 3px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+  .badge-primary { background: var(--blue-50); color: var(--blue-700); border: 1px solid var(--blue-100); }
+  .badge-gold { background: var(--gold-50); color: var(--gold-700); border: 1px solid var(--gold-200); }
+  .badge-success { background: var(--green-50); color: var(--green-700); border: 1px solid #CFE6D8; }
+  .badge-warning { background: var(--amber-50); color: var(--amber-700); border: 1px solid #EEDCBE; }
+  .badge-neutral { background: var(--neutral-100); color: var(--neutral-600); border: 1px solid var(--border-subtle); }
+
+  .pro-gate { background: var(--surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; }
+  .pro-gate h3 { margin: 0 0 8px; font-size: var(--text-h4); font-weight: 600; color: var(--text-strong); }
+  .pro-gate p { margin: 0; font-size: var(--text-sm); color: var(--text-muted); line-height: 1.6; }
+
+  .disclaimer { margin-top: 40px; padding: 14px 18px; background: var(--neutral-50); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); font-size: var(--text-xs); color: var(--text-muted); line-height: 1.6; }
+
+  .error-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; gap: 12px; }
+  .error-state h2 { margin: 0; font-size: var(--text-h3); color: var(--text-strong); }
+  .error-state p { margin: 0; color: var(--text-muted); font-size: var(--text-base); }
+
+  .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; color: var(--text-muted); font-size: var(--text-sm); }
+
+  @media (max-width: 600px) {
+    .stat-grid { grid-template-columns: 1fr; }
+    .wrap { padding: 32px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <img src="/app/assets/everledge-mark-light.png" alt="EverLedge">
+    <span>EverLedge</span>
+  </div>
+  <span class="topbar-badge">Executor Portal</span>
+</div>
+
+<div class="wrap" id="app">
+  <div class="loading">Loading estate information…</div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://vzanekapmmnjspbbydek.supabase.co';
+
+function fmt(n) {
+  return '£' + Number(n).toLocaleString('en-GB', { minimumFractionDigits: 0 });
+}
+
+function initials(name) {
+  return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function badge(label, tone) {
+  return `<span class="row-badge badge-${tone}">${label}</span>`;
+}
+
+async function load() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+  const app = document.getElementById('app');
+
+  if (!token) {
+    app.innerHTML = `<div class="error-state"><h2>Invalid link</h2><p>This executor portal link is missing a token. Please ask the estate owner to resend their access link.</p></div>`;
+    return;
+  }
+
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/executor-portal-data?token=${encodeURIComponent(token)}`);
+  if (!res.ok) {
+    const text = await res.text();
+    app.innerHTML = `<div class="error-state"><h2>Link not found</h2><p>${text || 'This link may have expired or been revoked. Please contact the estate owner.'}</p></div>`;
+    return;
+  }
+
+  const d = await res.json();
+  const generated = new Date(d.generatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Build the page
+  let html = `
+    <div class="hero">
+      <div class="hero-label">Estate of</div>
+      <h1 class="hero-name">${d.ownerName}</h1>
+      <p class="hero-sub">This summary has been shared with you in your capacity as a named executor. Information correct as of ${generated}.</p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Gross estate value</div>
+        <div class="stat-value">${fmt(d.grossEstate)}</div>
+        <div class="stat-sub">Sum of all recorded assets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Estimated IHT liability</div>
+        <div class="stat-value ${d.ihtEstimate > 0 ? 'amber' : ''}">${fmt(d.ihtEstimate)}</div>
+        <div class="stat-sub">${d.ihtEstimate > 0 ? 'At current 40% rate — seek professional advice' : 'Within nil rate bands'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Net legacy (estimated)</div>
+        <div class="stat-value blue">${fmt(d.grossEstate - d.ihtEstimate)}</div>
+        <div class="stat-sub">After estimated IHT</div>
+      </div>
+    </div>
+  `;
+
+  // Executors section
+  html += `<div class="section">
+    <div class="section-title">Named executors</div>
+    <div class="card">`;
+  (d.executors || []).forEach(e => {
+    html += `<div class="row">
+      <div class="row-avatar ${e.is_primary ? 'gold' : ''}">${initials(e.name)}</div>
+      <div class="row-body">
+        <div class="row-name">${e.name}</div>
+        <div class="row-sub">${e.relationship || ''}${e.email ? ' · ' + e.email : ''}${e.phone ? ' · ' + e.phone : ''}</div>
+      </div>
+      <div>${badge(e.role || 'Executor', e.is_primary ? 'gold' : 'primary')}</div>
+    </div>`;
+  });
+  if (!d.executors || d.executors.length === 0) {
+    html += `<div class="row"><div class="row-body"><div class="row-sub">No executors recorded.</div></div></div>`;
+  }
+  html += `</div></div>`;
+
+  if (d.isPro) {
+    // Asset breakdown
+    if (d.assets && d.assets.length > 0) {
+      const byCategory = d.assets.reduce((acc, a) => { if (!acc[a.category]) acc[a.category] = []; acc[a.category].push(a); return acc; }, {});
+      html += `<div class="section"><div class="section-title">Estate assets</div><div class="card">`;
+      Object.entries(byCategory).forEach(([cat, items]) => {
+        items.forEach((a, i) => {
+          html += `<div class="row">
+            <div class="row-body">
+              <div class="row-name">${a.name}</div>
+              <div class="row-sub">${cat}${a.notes ? ' · ' + a.notes : ''}</div>
+            </div>
+            <div class="row-right">
+              <div class="row-value">${fmt(a.value)}</div>
+            </div>
+          </div>`;
+        });
+      });
+      html += `</div></div>`;
+    }
+
+    // Gifts
+    const MS7 = 7 * 365.25 * 24 * 3600 * 1000;
+    const SPOUSE_RELS = ['spouse', 'partner', 'civil partner'];
+    const isPET = g => !g.from_surplus_income && !SPOUSE_RELS.includes((g.relationship||'').toLowerCase()) && Date.now() - new Date(g.gift_date) < MS7;
+
+    if (d.gifts && d.gifts.length > 0) {
+      html += `<div class="section"><div class="section-title">Lifetime gifts</div><div class="card">`;
+      d.gifts.forEach(g => {
+        const pet = isPET(g);
+        const exempt = g.from_surplus_income || SPOUSE_RELS.includes((g.relationship||'').toLowerCase());
+        const dateStr = new Date(g.gift_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        html += `<div class="row">
+          <div class="row-body">
+            <div class="row-name">${g.recipient}</div>
+            <div class="row-sub">${g.relationship || ''} · ${dateStr}</div>
+          </div>
+          <div class="row-right">
+            <div class="row-value">${fmt(g.value)}</div>
+            ${badge(exempt ? 'Exempt' : pet ? 'Active PET' : 'Exempt', exempt ? 'success' : pet ? 'warning' : 'success')}
+          </div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    // Documents
+    if (d.documents && d.documents.length > 0) {
+      html += `<div class="section"><div class="section-title">Recorded documents</div><div class="card">`;
+      d.documents.forEach(doc => {
+        const dateStr = new Date(doc.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        html += `<div class="row">
+          <div class="row-body">
+            <div class="row-name">${doc.name}</div>
+            <div class="row-sub">Added ${dateStr}</div>
+          </div>
+          ${doc.tag ? badge(doc.tag, 'neutral') : ''}
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  } else {
+    // Free plan gate for full details
+    html += `<div class="section">
+      <div class="pro-gate">
+        <h3>Full estate detail available on Professional</h3>
+        <p>The estate owner can upgrade to EverLedge Professional to give you access to a full asset breakdown, lifetime gifts, and documents list.</p>
+      </div>
+    </div>`;
+  }
+
+  html += `<div class="disclaimer">
+    <strong>Important:</strong> This information is provided for estate administration purposes only and does not constitute legal or tax advice. IHT figures are illustrative estimates. Consult a qualified solicitor or tax adviser before taking action.
+  </div>`;
+
+  app.innerHTML = html;
+}
+
+load().catch(err => {
+  document.getElementById('app').innerHTML = `<div class="error-state"><h2>Something went wrong</h2><p>${err.message}</p></div>`;
+});
+</script>
+</body>
+</html>

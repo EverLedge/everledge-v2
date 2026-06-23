@@ -1,10 +1,11 @@
 /* Executors & Documents screens — full Supabase CRUD */
 
 function ExecutorsScreen({ search }) {
-  const { Card, Avatar, Badge, Button, Icon, Input, Select } = window.EverLedgeDesignSystem_de3ce8;
+  const { Card, Avatar, Badge, Button, Icon } = window.EverLedgeDesignSystem_de3ce8;
   const [executors, setExecutors] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [adding, setAdding] = React.useState(false);
+  const [copiedId, setCopiedId] = React.useState(null);
   const sb = window._supabase;
 
   async function load() {
@@ -27,11 +28,37 @@ function ExecutorsScreen({ search }) {
     setExecutors(prev => prev.filter(e => e.id !== id));
   }
 
+  async function shareLink(executor) {
+    const { data: { session } } = await sb.auth.getSession();
+    // Upsert a token for this executor (one token per executor)
+    const { data: existing } = await sb
+      .from('executor_access')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .eq('executor_id', executor.id)
+      .single();
+
+    let tokenId = existing?.id;
+    if (!tokenId) {
+      const { data: created } = await sb
+        .from('executor_access')
+        .insert({ user_id: session.user.id, executor_id: executor.id })
+        .select('id')
+        .single();
+      tokenId = created?.id;
+    }
+
+    const url = window.location.origin + '/executor-portal?token=' + tokenId;
+    await navigator.clipboard.writeText(url);
+    setCopiedId(executor.id);
+    setTimeout(() => setCopiedId(null), 2500);
+  }
+
   return (
     <div style={{ padding: '32px 36px 56px', maxWidth: 'var(--content-max)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
         <p style={{ margin: 0, fontSize: 'var(--text-base)', color: 'var(--text-muted)', maxWidth: 560, lineHeight: 1.55 }}>
-          The people entrusted to administer your estate. Keep their details current so your affairs can be settled without delay.
+          The people entrusted to administer your estate. Share their access link so they can view your estate summary when the time comes.
         </p>
         <Button variant="primary" iconLeft={<Icon name="plus" size={16} />} onClick={() => setAdding(true)}>Add executor</Button>
       </div>
@@ -54,6 +81,13 @@ function ExecutorsScreen({ search }) {
                   <Icon name="mail" size={13} color="var(--neutral-400)" />{e.email}
                 </div>
               )}
+              <button
+                onClick={() => shareLink(e)}
+                style={{ marginTop: 16, width: '100%', height: 34, borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)', background: copiedId === e.id ? 'var(--green-50)' : 'var(--surface-app)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 7, fontSize: 'var(--text-xs)', fontWeight: 600, fontFamily: 'var(--font-sans)', color: copiedId === e.id ? 'var(--green-700)' : 'var(--text-muted)', transition: 'all 140ms' }}
+              >
+                <Icon name={copiedId === e.id ? 'check' : 'link'} size={13} color={copiedId === e.id ? 'var(--green-600)' : 'var(--neutral-400)'} />
+                {copiedId === e.id ? 'Link copied!' : 'Copy access link'}
+              </button>
             </Card>
           ))}
 
