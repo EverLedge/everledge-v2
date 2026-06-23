@@ -77,11 +77,13 @@ function AddExecutorDialog({ onClose, onSaved }) {
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [isPrimary, setIsPrimary] = React.useState(false);
+  const [consented, setConsented] = React.useState(false);
   const [form, setForm] = React.useState({ name: '', relationship: '', role: 'Executor', email: '', phone: '' });
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
   async function save() {
     if (!form.name.trim()) { setError('Please enter the executor\'s full name.'); return; }
+    if (!consented) { setError('You must confirm the executor has given their permission before saving.'); return; }
     setSaving(true); setError(null);
     const sb = window._supabase;
     const { data: { session } } = await sb.auth.getSession();
@@ -124,6 +126,13 @@ function AddExecutorDialog({ onClose, onSaved }) {
           <Input label="Phone (optional)" type="tel" placeholder="+44 7700 000000" value={form.phone} onChange={e => set('phone', e.target.value)} />
           <div style={{ gridColumn: '1/-1' }}>
             <Checkbox label="This is the primary executor" checked={isPrimary} onChange={v => setIsPrimary(v)} />
+          </div>
+          <div style={{ gridColumn: '1/-1', padding: '14px 16px', background: 'var(--blue-50)', border: '1px solid var(--blue-100)', borderRadius: 'var(--radius-md)' }}>
+            <Checkbox
+              checked={consented}
+              onChange={v => setConsented(v)}
+              label="I confirm that the person named above has given their explicit permission for their personal details to be recorded on EverLedge for the purpose of estate administration."
+            />
           </div>
         </div>
         <div style={{ padding: '18px 28px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'flex-end', gap: 12, background: 'var(--neutral-50)' }}>
