@@ -1,4 +1,4 @@
-function OverviewScreen({ search }) {
+function OverviewScreen({ search, onNavigate }) {
   const { Card, Badge, Icon, Avatar, Button } = window.EverLedgeDesignSystem_de3ce8;
   const [state, setState] = React.useState({ assets: [], gifts: [], executors: [], docs: [], loading: true });
   const sb = window._supabase;
@@ -19,9 +19,12 @@ function OverviewScreen({ search }) {
   const { assets, gifts, executors, docs, loading } = state;
   const MS7 = 7 * 365.25 * 24 * 3600 * 1000;
   const fmt = (n) => '£' + Number(n).toLocaleString('en-GB', { minimumFractionDigits: 0 });
+  const SPOUSE_RELS = ['spouse', 'partner', 'civil partner'];
+  const isExempt = (g) => g.from_surplus_income || SPOUSE_RELS.includes((g.relationship || '').toLowerCase());
+  const isPET = (g) => !isExempt(g) && Date.now() - new Date(g.gift_date) < MS7;
 
   const grossEstate = assets.reduce((s, a) => s + Number(a.value), 0);
-  const activePETs = gifts.filter(g => Date.now() - new Date(g.gift_date) < MS7 && !g.from_surplus_income);
+  const activePETs = gifts.filter(isPET);
   const lifetimeGifts = activePETs.reduce((s, g) => s + Number(g.value), 0);
   const hasProperty = assets.some(a => a.category === 'Property');
   const NRB = 325000;
@@ -95,8 +98,8 @@ function OverviewScreen({ search }) {
             <div style={{ padding: '32px 22px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}>No gifts recorded yet.</div>
           ) : (
             recentGifts.map((g, i) => {
-              const yearsAgo = (Date.now() - new Date(g.gift_date)) / (365.25 * 24 * 3600 * 1000);
-              const isPET = yearsAgo < 7 && !g.from_surplus_income;
+              const giftIsPET = isPET(g);
+              const giftIsExempt = isExempt(g) || (Date.now() - new Date(g.gift_date)) >= MS7;
               return (
                 <div key={g.id} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 22px', borderBottom: i < recentGifts.length - 1 ? '1px solid var(--border-subtle)' : 'none' }}>
                   <Avatar name={g.recipient} size={34} tone="navy" />
@@ -106,7 +109,7 @@ function OverviewScreen({ search }) {
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--text-strong)' }}>{'£' + Number(g.value).toLocaleString('en-GB')}</div>
-                    <Badge tone={g.from_surplus_income ? 'success' : isPET ? 'warning' : 'success'} style={{ marginTop: 3 }}>{g.from_surplus_income ? 'Exempt' : isPET ? 'PET' : 'Exempt'}</Badge>
+                    <Badge tone={giftIsPET ? 'warning' : 'success'} style={{ marginTop: 3 }}>{giftIsPET ? 'PET' : 'Exempt'}</Badge>
                   </div>
                 </div>
               );
@@ -179,7 +182,7 @@ function OverviewScreen({ search }) {
               { label: 'Record a gift', icon: 'gift', view: 'gifts' },
               { label: 'Add executors', icon: 'users', view: 'executors' },
             ].map(a => (
-              <Button key={a.label} variant="secondary" iconLeft={<Icon name={a.icon} size={16} />}>{a.label}</Button>
+              <Button key={a.label} variant="secondary" iconLeft={<Icon name={a.icon} size={16} />} onClick={() => onNavigate && onNavigate(a.view)}>{a.label}</Button>
             ))}
           </div>
         </Card>

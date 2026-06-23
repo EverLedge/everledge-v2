@@ -29,7 +29,9 @@ function ReportsScreen() {
   const NRB = 325000;
   const RNRB = hasProperty ? 175000 : 0;
   const MS7 = 7 * MS_YEAR;
-  const activeGifts = gifts.filter(g => Date.now() - new Date(g.gift_date) < MS7 && !g.from_surplus_income);
+  const SPOUSE_RELS = ['spouse', 'partner', 'civil partner'];
+  const isExempt = (g) => g.from_surplus_income || SPOUSE_RELS.includes((g.relationship || '').toLowerCase());
+  const activeGifts = gifts.filter(g => !isExempt(g) && Date.now() - new Date(g.gift_date) < MS7);
   const activeGiftsTotal = activeGifts.reduce((s, g) => s + Number(g.value), 0);
   const nrbUsedByGifts = Math.min(NRB, activeGiftsTotal);
   const nrbForEstate = NRB - nrbUsedByGifts;

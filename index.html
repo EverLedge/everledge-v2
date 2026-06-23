@@ -101,7 +101,7 @@
     );
 
     let screen;
-    if      (view === 'overview')  screen = <window.OverviewScreen  search={search} />;
+    if      (view === 'overview')  screen = <window.OverviewScreen  search={search} onNavigate={handleNav} />;
     else if (view === 'estate')    screen = <window.EstateScreen    search={search} />;
     else if (view === 'gifts')     screen = <window.GiftsScreen     search={search} />;
     else if (view === 'executors') screen = <window.ExecutorsScreen search={search} />;

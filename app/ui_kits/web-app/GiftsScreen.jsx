@@ -16,10 +16,13 @@ function GiftsScreen({ search }) {
 
   const MS = 365.25 * 24 * 3600 * 1000;
   const yrs = (d) => (Date.now() - new Date(d)) / MS;
+  const SPOUSE_RELS = ['spouse', 'partner', 'civil partner'];
+  const isExempt = (g) => g.from_surplus_income || SPOUSE_RELS.includes((g.relationship || '').toLowerCase());
+  const isPET = (g) => !isExempt(g) && yrs(g.gift_date) < 7;
 
   let filtered = gifts.filter((g) => {
-    if (tab === 'exempt') return yrs(g.gift_date) >= 7;
-    if (tab === 'active') return yrs(g.gift_date) < 7;
+    if (tab === 'exempt') return isExempt(g) || yrs(g.gift_date) >= 7;
+    if (tab === 'active') return isPET(g);
     return true;
   });
   if (search) {
@@ -40,7 +43,7 @@ function GiftsScreen({ search }) {
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 6 }}>
         <Tabs active={tab} onChange={setTab} tabs={[
           { id: 'all', label: 'All gifts · ' + gifts.length },
-          { id: 'active', label: 'Active PETs' },
+          { id: 'active', label: 'Active PETs · ' + gifts.filter(isPET).length },
           { id: 'exempt', label: 'Exempt' },
         ]} />
       </div>
