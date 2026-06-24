@@ -129,7 +129,7 @@
         <button type="submit" class="btn-primary" id="submit-btn">Create account</button>
       </form>
 
-      <p class="terms">By creating an account you agree to EverLedge's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+      <p class="terms">By creating an account you agree to EverLedge's <a href="https://everledge.co.uk/terms" target="_blank" rel="noopener">Terms of Service</a> and <a href="https://everledge.co.uk/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
     </div>
   </div>
 </div>
@@ -184,7 +184,10 @@
     });
 
     if (error) {
-      showAlert(error.message, 'error');
+      const msg = error.message && error.message !== '{}'
+        ? error.message
+        : 'Something went wrong. Please try again or contact hello@everledge.co.uk.';
+      showAlert(msg, 'error');
       btn.disabled = false;
       btn.textContent = 'Create account';
     } else {
