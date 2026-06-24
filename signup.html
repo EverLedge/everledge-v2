@@ -184,9 +184,7 @@
     });
 
     if (error) {
-      const msg = error.message && error.message !== '{}'
-        ? error.message
-        : 'Something went wrong. Please try again or contact hello@everledge.co.uk.';
+      const msg = error.message || error.msg || JSON.stringify(error);
       showAlert(msg, 'error');
       btn.disabled = false;
       btn.textContent = 'Create account';
