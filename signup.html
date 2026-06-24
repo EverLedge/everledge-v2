@@ -175,17 +175,19 @@
       btn.disabled = false; btn.textContent = 'Create account'; return;
     }
 
-    const { error } = await sb.auth.signUp({
+    const result = await sb.auth.signUp({
       email,
       password,
       options: {
         data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}` },
       },
     });
+    console.log('signUp result:', JSON.stringify(result));
+    const { error } = result;
 
     if (error) {
-      const msg = error.message || error.msg || JSON.stringify(error);
-      showAlert(msg, 'error');
+      const msg = error.message || error.msg || error.status || JSON.stringify(error) || 'Unknown error (status 500)';
+      showAlert('Error: ' + msg, 'error');
       btn.disabled = false;
       btn.textContent = 'Create account';
     } else {
