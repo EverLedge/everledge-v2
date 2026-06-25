@@ -1217,7 +1217,7 @@ function SidebarNav({
       letterSpacing: '-0.02em',
       color: 'var(--navy-800)'
     }
-  }, "EverLedge")), /*#__PURE__*/React.createElement("div", {
+  }, "EverLedge®")), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       padding: '0 var(--space-3)',
