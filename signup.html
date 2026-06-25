@@ -184,14 +184,16 @@
     });
 
     if (signUpError) {
-      const msg = signUpError.message || signUpError.msg || JSON.stringify(signUpError) || 'Something went wrong.';
+      const msg = signUpError.message || signUpError.status
+        ? `${signUpError.message || 'Signup failed'} (${signUpError.status || 'unknown status'})`
+        : 'Something went wrong. Please try again or contact support@everledge.co.uk.';
       showAlert(msg, 'error');
       btn.disabled = false;
       btn.textContent = 'Create account';
       return;
     }
 
-    // If signup returned a session, go straight to app
+    // Session returned = email confirmation is off, sign them straight in
     if (signUpData?.session) {
       showAlert('Account created! Taking you to the app…', 'success');
       btn.textContent = 'Account created';
@@ -199,17 +201,9 @@
       return;
     }
 
-    // Otherwise sign in explicitly
-    const { error: signInError } = await sb.auth.signInWithPassword({ email, password });
-    if (signInError) {
-      showAlert('Account created! Please sign in.', 'success');
-      btn.textContent = 'Account created';
-      setTimeout(() => { window.location.href = '/login'; }, 1500);
-    } else {
-      showAlert('Account created! Taking you to the app…', 'success');
-      btn.textContent = 'Account created';
-      setTimeout(() => { window.location.href = '/'; }, 1000);
-    }
+    // No session = confirmation email sent
+    showAlert('Account created! Please check your email to confirm your account, then sign in.', 'success');
+    btn.textContent = 'Check your email';
   });
 </script>
 </body>
