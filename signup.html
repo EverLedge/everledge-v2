@@ -175,25 +175,40 @@
       btn.disabled = false; btn.textContent = 'Create account'; return;
     }
 
-    const result = await sb.auth.signUp({
+    const { data: signUpData, error: signUpError } = await sb.auth.signUp({
       email,
       password,
       options: {
         data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}` },
       },
     });
-    console.log('signUp result:', JSON.stringify(result));
-    const { error } = result;
 
-    if (error) {
-      const msg = error.message || error.msg || error.status || JSON.stringify(error) || 'Unknown error (status 500)';
-      showAlert('Error: ' + msg, 'error');
+    if (signUpError) {
+      const msg = signUpError.message || signUpError.msg || JSON.stringify(signUpError) || 'Something went wrong.';
+      showAlert(msg, 'error');
       btn.disabled = false;
       btn.textContent = 'Create account';
+      return;
+    }
+
+    // If signup returned a session, go straight to app
+    if (signUpData?.session) {
+      showAlert('Account created! Taking you to the app…', 'success');
+      btn.textContent = 'Account created';
+      setTimeout(() => { window.location.href = '/'; }, 1000);
+      return;
+    }
+
+    // Otherwise sign in explicitly
+    const { error: signInError } = await sb.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      showAlert('Account created! Please sign in.', 'success');
+      btn.textContent = 'Account created';
+      setTimeout(() => { window.location.href = '/signin'; }, 1500);
     } else {
       showAlert('Account created! Taking you to the app…', 'success');
       btn.textContent = 'Account created';
-      setTimeout(() => { window.location.href = '/'; }, 1500);
+      setTimeout(() => { window.location.href = '/'; }, 1000);
     }
   });
 </script>
