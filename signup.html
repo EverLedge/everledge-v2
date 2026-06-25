@@ -191,8 +191,9 @@
       btn.disabled = false;
       btn.textContent = 'Create account';
     } else {
-      showAlert('Account created! Check your email to confirm, then sign in.', 'success');
+      showAlert('Account created! Taking you to the app…', 'success');
       btn.textContent = 'Account created';
+      setTimeout(() => { window.location.href = '/'; }, 1500);
     }
   });
 </script>
